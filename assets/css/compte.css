@@ -1,0 +1,30 @@
+#main{
+    width: 750px;
+    height: 100%;
+    margin: auto;
+}
+
+#head{
+    width: 700px;
+    height: 400px;
+    margin: auto;
+}
+
+#body{
+    width: 700px;
+    height: 200px;
+    margin: auto;
+}
+
+#foot{
+    width: 700px;
+    height: 100px;
+    margin: auto;
+}
+
+#profil{
+    width: 250px;
+    height: 250px;
+    display: block;
+    margin: auto;
+}

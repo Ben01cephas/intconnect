@@ -1,12 +1,14 @@
 <?php
     function datejour()//Retourne la date du jour 
     {
+        date_default_timezone_set('Africa/Dakar'); 
         $date = date('Y-m-d');
         return $date; 
     }
 
     function datedujour()//écris la date du jour
     {
+        date_default_timezone_set('Africa/Dakar'); 
         $date = datejour();
         echo"$date";
     }
@@ -261,7 +263,6 @@
     function compteConsulte()
     {
         $id_int = $_GET['id'];
-        $link = $_SERVER['PHP_SELF'];
         $conn = connDb();
 
         $sql_compte = "SELECT * FROM `intern` WHERE id_intern = $id_int;";
@@ -538,8 +539,6 @@
             $sql_query = mysqli_query($conn, $sql_dlact) or die(mysqli_error($conn));
             header("location:home.php");
         }
-
-        
     }
 
     if(isset($_FILES['file']))//Modifer photo de profile

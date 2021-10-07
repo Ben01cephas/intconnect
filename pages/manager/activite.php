@@ -1,4 +1,4 @@
-<?php session_start(); require_once("../../database/user.php");?>
+<?php session_start(); require_once("../../database/user.php"); require_once("../../database/activity.php"); $npage = "activite";?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,8 +13,9 @@
     <title>Document</title>
 </head>
 <body>
-<?php include('../../include/navadmin.php') ?>
-    <?php compteConsulte(); ?>
-    <?php if(isset($_POST['delete'])){deleteUser();} ?>
+    <?php include('../../include/navmng.php') ?>
+
 </body>
 </html>
+
+

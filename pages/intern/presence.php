@@ -1,4 +1,4 @@
-<?php session_start(); require_once("../../database/fonction.php");?>
+<?php session_start(); require_once("../../database/user.php"); $npage = "presence"?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,13 +6,17 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link type="text/css" rel="stylesheet" href="../../assets/css/presence.css">
+    <link rel="stylesheet" href="../../assets/css/presence.css?v=<?php echo time()?>">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <title>Document</title>
 </head>
 <body>
-    <a href="home.php">Accueil</a>
-    <form action="<?php echo $_SERVER['PHP_SELF']?>" method="post">
-        <input type="date" name="datep">
-        <input type="submit" value="valider" name="buttondatep">
-    </form>
+
+    <?php include('../../include/navint.php') ?>
+    <?php userPres();?>
+
 </body>
 </html>

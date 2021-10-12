@@ -25,43 +25,113 @@
 
     //fonction de l'administrateur----------------------------------------------------------------------------------------------------
 
-    //fonction qui liste de façon décroissante les utilisateur inscrit dans la base de données
-    function listUser()
+    //Bouton pour aoujter des utilisateurs 
+    function modalAdd()
+    {
+
+    $url = $_SERVER['PHP_SELF'];
+
+    echo'
+        <!-- Button to Open the Modal -->
+        <button type="button" class="btn btn-primary d-inline" data-toggle="modal" data-target="#myModal">Ajouter un compte</button>
+
+        <!-- The Modal -->
+        <div class="modal fade" id="myModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+
+                        <!-- Modal Header -->
+                            <div class="modal-header">
+                                <h4 class="modal-title">Ajouter un nouveau compte</h4>
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            </div>
+
+                            <!-- Modal body -->
+                            <div class="modal-body p-5">
+                                <form action="'.$url.'" method="post" class="">
+                                    <div class="">
+                                        <label for="nom">Nom</label>
+                                        <input type="text" class="form-control" name="nom" required>
+                                    </div>
+
+                                    <div class="">
+                                        <label for="prenom">Prénom</label>
+                                        <input type="text" class="form-control" name="prenom" required>
+                                    </div>
+
+                                    <div class="">
+                                        <label for="sexe">Genre</label>
+                                        <select name="genre" class="form-control" id="">
+                                            <option value="Homme">Homme</option>
+                                            <option value="Femme">Femme</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="">
+                                        <label for="tel">Numéro de téléphone</label>
+                                        <input type="number" class="form-control" name="tel" required>
+                                    </div>
+
+                                    <div class="">
+                                        <label for="email">Adresse électronique</label>
+                                        <input type="text" class="form-control" name="email" required>
+                                    </div>
+
+                                    <div>
+                                        <label for="type">Type</label>
+                                        <select name="type" class="form-control" id="">
+                                            <option value="mng">Manager</option>
+                                            <option value="int">stagiaire</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="mt-3 mx-auto" style="width: 100px">
+                                        <input type="submit" name="add" class="btn btn-primary" value="Ajouter">
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>';
+    }
+
+    //nombre d'utilisateur
+    function userNumber($indice)
     {
         $conn = connDb();
-        $url = $_SERVER['PHP_SELF'];
-
-        $sql_nb="SELECT * FROM `intern`";
-        $query_nb=mysqli_query($conn,$sql_nb) or die(mysqli_error($conn));
-        $nb=mysqli_num_rows($query_nb);
-
-        if($nb%5==0)
+  
+        if($indice=='')
         {
-            $check = $nb/5;            
+            $sql = "SELECT COUNT(*) nb FROM `user` WHERE fonction = 'int' or fonction = 'mng'";
+            $query=mysqli_query($conn,$sql) or die(mysqli_error($conn));
+            $number = mysqli_fetch_array($query);
+            extract($number);
+
+            echo"<h3 class='font-weight-bold'>$nb</h3>";
         }else
         {
-            $check = (($nb/5) + 1);
-        }
+            $sql = "SELECT COUNT(*) nb FROM `user` WHERE fonction = '$indice'";
+            $query=mysqli_query($conn,$sql) or die(mysqli_error($conn));
+            $number = mysqli_fetch_array($query);
+            extract($number);
 
-        echo"<div class='container w-50'><ul class='pagination '>";
-        for($i=1; $i<=$check; $i++)
-        {
-            echo "<li class='page-item'><a class='page-link' href='$url?n=$i'>$i</a></li>";
+            echo"<h3 class='font-weight-bold'>$nb</h3>";
         }
-        echo"</ul>";
+    }
 
-        if (isset($_GET['n']))
+    //Utilisateur récements ajoutés
+    function recentUser($indice)
+    {   
+
+        $conn = connDb();
+
+        echo"<div class='table-responsive-sm'>";
+        if($indice=='')
         {
-            $n = $_GET['n'];
+            $sql = "SELECT * FROM `user` WHERE fonction = 'int' or fonction = 'mng' ORDER BY id_user DESC LIMIT 5";
+            $query=mysqli_query($conn,$sql) or die(mysqli_error($conn));
             
-            $lmax = $n * 5;
-            $lmin = $lmax - 5;
-
-            $sql_list = "SELECT * FROM `user` WHERE fonction = 'int' OR fonction = 'mng' ORDER BY id_user DESC  LIMIT $lmin, $lmax";
-            $query_list = mysqli_query($conn, $sql_list) or die(mysqli_error($conn));
-
             echo"
-            
             <table class='table table-hover'>
             <thead>
                 <tr>
@@ -69,20 +139,187 @@
                     <th>Prénom</th>
                     <th>Adresse email</th>
                 </tr>
-            </thead>
-            ";
-            while($list = mysqli_fetch_array($query_list))
+            </thead>";
+
+            while($user = mysqli_fetch_array($query))
             {
-                extract($list);
+                extract($user);
                 echo"
                 <tr>
-                    <td><a href='compte.php?id=$id_user'>$last_name</a></td>
-                    <td><a href='compte.php?id=$id_user'>$first_name</a></td>
-                    <td><a href='compte.php?id=$id_user'>$email</a></td>
+                    <td><a class='text-muted' href='compte.php?id=$id_user'>$last_name</a></td>
+                    <td><a class='text-muted' href='compte.php?id=$id_user'>$first_name</a></td>
+                    <td><a class='text-muted' href='compte.php?id=$id_user'>$email</a></td>
                 </tr>
                 "; 
             }       
-            echo"</table></div>";     
+            echo"</table></div>";
+        }else
+        {
+            $sql = "SELECT * FROM `user` WHERE fonction = '$indice' ORDER BY id_user DESC LIMIT 5";
+            $query=mysqli_query($conn,$sql) or die(mysqli_error($conn));
+            
+            echo"
+            <table class='table table-hover'>
+            <thead>
+                <tr>
+                    <th>Nom</th>
+                    <th>Prénom</th>
+                    <th>Adresse email</th>
+                </tr>
+            </thead>";
+
+            while($user = mysqli_fetch_array($query))
+            {
+                extract($user);
+                echo"
+                <tr>
+                    <td><a class='text-muted' href='compte.php?id=$id_user'>$last_name</a></td>
+                    <td><a class='text-muted' href='compte.php?id=$id_user'>$first_name</a></td>
+                    <td><a class='text-muted' href='compte.php?id=$id_user'>$email</a></td>
+                </tr>
+                "; 
+            }       
+            echo"</table></div>";
+        }
+    }
+
+    //fonction qui liste de façon décroissante les utilisateur inscrit dans la base de données
+    function listUser($indice)
+    {
+
+        $conn = connDb();
+        $url = $_SERVER['PHP_SELF'];
+
+        if($indice=='user')
+        {
+            $sql_nb="SELECT * FROM `user` WHERE fonction = 'int' or fonction = 'mng'";
+            $query_nb=mysqli_query($conn,$sql_nb) or die(mysqli_error($conn));
+            $nb=mysqli_num_rows($query_nb);
+
+            if($nb%5==0)
+            {
+                $check = $nb/5;            
+            }else
+            {
+                $check = (($nb/5) + 1);
+            }
+
+            echo"<div class='container'>
+            <ul class='pagination '>";
+            for($i=1; $i<=$check; $i++)
+            {
+                echo "<li class='page-item'><a class='page-link' href='$url?i=$indice&n=$i'>$i</a></li>";
+            }
+            echo"</ul>";
+
+            if (isset($_GET['n']))
+            {
+                $n = $_GET['n'];
+                
+                $lmax = $n * 5;
+                $lmin = $lmax - 5;
+
+                $sql_list = "SELECT * FROM `user` WHERE fonction = 'int' OR fonction = 'mng' ORDER BY id_user DESC  LIMIT $lmin, $lmax";
+                $query_list = mysqli_query($conn, $sql_list) or die(mysqli_error($conn));
+
+                echo"
+                
+                <div class='table-responsive-sm'>
+                <table class='table table-hover'>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Nom</th>
+                        <th>Prénom</th>
+                        <th>Genre</th>
+                        <th>Téléphone</th>
+                        <th>Email</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                ";
+                while($list = mysqli_fetch_array($query_list))
+                {
+                    extract($list);
+                    echo'
+                    <tr>
+                        <td>'.$id_user.'</a></td>
+                        <td>'.$last_name.'</a></td>
+                        <td>'.$first_name.'</a></td>
+                        <td>'.$gender.'</a></td>
+                        <td>'.$tel.'</a></td>
+                        <td>'.$email.'</a></td>
+                        <td>Modifier Supprimer</td>
+                    </tr>
+                    '; 
+                }       
+                echo"</table></div>";     
+            }
+        }else
+        {
+            $sql_nb="SELECT * FROM `user` WHERE fonction = '$indice'";
+            $query_nb=mysqli_query($conn,$sql_nb) or die(mysqli_error($conn));
+            $nb=mysqli_num_rows($query_nb);
+
+            if($nb%5==0)
+            {
+                $check = $nb/5;            
+            }else
+            {
+                $check = (($nb/5) + 1);
+            }
+
+            echo"<div class='container'>
+            <ul class='pagination '>";
+            for($i=1; $i<=$check; $i++)
+            {
+                echo "<li class='page-item'><a class='page-link' href='$url?i=$indice&n=$i'>$i</a></li>";
+            }
+            echo"</ul>";
+
+            if (isset($_GET['n']))
+            {
+                $n = $_GET['n'];
+                
+                $lmax = $n * 5;
+                $lmin = $lmax - 5;
+
+                $sql_list = "SELECT * FROM `user` WHERE fonction = '$indice' ORDER BY id_user DESC  LIMIT $lmin, $lmax";
+                $query_list = mysqli_query($conn, $sql_list) or die(mysqli_error($conn));
+
+                echo"
+                
+                <div class='table-responsive-sm'>
+                <table class='table table-hover'>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Nom</th>
+                        <th>Prénom</th>
+                        <th>Genre</th>
+                        <th>Téléphone</th>
+                        <th>Email</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                ";
+                while($list = mysqli_fetch_array($query_list))
+                {
+                    extract($list);
+                    echo'
+                    <tr>
+                        <td>'.$id_user.'</td>
+                        <td>'.$last_name.'</td>
+                        <td>'.$first_name.'</td>
+                        <td>'.$gender.'</td>
+                        <td>'.$tel.'</td>
+                        <td>'.$email.'></td>
+                        <td>Modifier Supprimer</td>
+                    </tr>
+                    '; 
+                }       
+                echo"</table></div>";     
+            }
         }
     }
 
@@ -103,7 +340,7 @@
         $sql_ajout = "INSERT INTO `user` (`id_user`, `last_name`, `first_name`, `tel`, `gender`, `email`, `password`, `fonction`, `photo`) VALUES (NULL, '$nom', '$prenom', '$tel', '$sexe', '$email', '$mdpc', '$type', 'profilbasic.jpg')";
         $sql_query = mysqli_query($conn, $sql_ajout) or die(mysqli_error($conn));
 
-        header("location:gestion.php");
+        header("location:user.php?n=1");
     }
 
     //fonction de recherche de recherche d'utilisateur avec filtre

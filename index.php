@@ -21,7 +21,7 @@
     <div class="bg">
     <div class="container my-5 d-inline-block align-middle mw-100 ">
         <div class="container w-25 text-center text-light">
-            <h3 class="">INTERN CONNECT</h3>
+            <h3 class="">Stagieru Ui</h3>
         </div>
         <div class="container shadow-lg border w-25 p-4 bg-light">
             <form action="<?php echo $_SERVER['PHP_SELF']?>" method="post" class="needs-validation" novalidate>

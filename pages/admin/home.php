@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link type="text/css" rel="stylesheet" href="../../assets/css/gestion.css?v=<?php echo time() ?>">
+    <link type="text/css" rel="stylesheet" href="../../assets/css/homeadm.css?v=<?php echo time() ?>">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
@@ -14,80 +14,46 @@
     <title>Document</title>
 </head>
 <body>
-    <?php include('../../include/navadmin.php') ?>
-    <div class="container-fluid text-center">
-        <h1>Compte utilisateur</h1>
-    </div>
+    <div class="">
+        <?php include('../../include/navadmin.php') ?>
+        
+            <div class="w-75 mt-5 px-5">
+                <div class="container" style="border-bottom: 1px solid black;"><h4>DASHBOARD/HOME</h4></div>
 
-    <div id="" class="container w-75 text-center mt-5">
-        <?php if(isset( $_POST['add'])){addUser();}?>
-        <!-- Button to Open the Modal -->
-        <button type="button" class="btn btn-primary w-25" data-toggle="modal" data-target="#myModal">
-            Ajouter un compte
-        </button>
-
-        <a href="gestion.php"><button type="button" class="btn btn-primary w-25">Recherche</button></a>
-
-        <!-- The Modal -->
-        <div class="modal fade" id="myModal">
-            <div class="modal-dialog">
-                <div class="modal-content">
-
-                    <!-- Modal Header -->
-                    <div class="modal-header">
-                        <h4 class="modal-title">Ajouter un nouveau compte</h4>
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <div class="row mx-2 pt-3 text-white">
+                    <div class="mx-5 col p-3 rounded shadow" style="background-image: linear-gradient(45deg, rgb(126,233,230), rgb(34,198,193), rgb(30,176,172))">
+                        <?php userNumber('')?>
+                        <p class="text-right">Utilisateur</p>
+                        <a href="user.php?i=user&n=1" class="text-white">Voir plus ></a>
                     </div>
 
-                    <!-- Modal body -->
-                    <div class="modal-body p-5">
-                        <form action="<?php echo $_SERVER['PHP_SELF']?>" method="post" class="">
-                            <div class="">
-                                <label for="nom">Nom</label>
-                                <input type="text" class="form-control" name="nom" required>
-                            </div>
+                    <div class="mx-5 col bg-success p-3 rounded shadow" style="background-image: linear-gradient(45deg, rgb(246,231,165), rgb(239,213,95), rgb(232,195,25))">
+                        <?php userNumber('mng')?>  
+                        <p class="text-right">Manager</p>
+                        <a href="user.php?i=mng&n=1" class="text-white">Voir plus ></a>
+                    </div>
 
-                            <div class="">
-                                <label for="prenom">Prénom</label>
-                                <input type="text" class="form-control" name="prenom" required>
-                            </div>
+                    <div class="mx-5 col bg-info p-3 rounded shadow" style="background-image: linear-gradient(45deg, rgb(231,165,246), rgb(213,95,239), rgb(195,25,232))">
+                        <?php userNumber('int')?>
+                        <p class="text-right">Stagiaire</p>
+                        <a href="user.php?i=int&n=1" class="text-white">Voir plus ></a>
+                    </div>
+                </div>
 
-                            <div class="">
-                                <label for="sexe">Genre</label>
-                                <select name="genre" class="form-control" id="">
-                                    <option value="M">Male</option>
-                                    <option value="F">Female</option>
-                                </select>
-                            </div>
+                <div class="row mt-5 ">
+                    <div class="shadow ml-5 col">
+                        <p class="pt-2">Utilisateurs récements ajoutés</p>
+                        <?php recentUser('')?>
+                    </div>
 
-                            <div class="">
-                                <label for="tel">Numéro de téléphone</label>
-                                <input type="number" class="form-control" name="tel" required>
-                            </div>
-
-                            <div class="">
-                                <label for="email">Adresse électronique</label>
-                                <input type="text" class="form-control" name="email" required>
-                            </div>
-
-                            <div>
-                                <label for="type">Type</label>
-                                <select name="type" class="form-control" id="">
-                                    <option value="mng">Manager</option>
-                                    <option value="int">stagiaire</option>
-                                </select>
-                            </div>
-
-                            <div class="mt-3 mx-auto" style="width: 100px">
-                                <input type="submit" name="add" class="btn btn-primary" value="Ajouter">
-                            </div>
-                        </form>
+                    <div class="shadow ml-3 col">
+                        <p class="pt-2">Managers récements ajoutés</p>
+                        <?php recentUser('mng')?>
                     </div>
                 </div>
             </div>
         </div>
-
-        <?php listUser()?>
-    </div> 
+    </div>
+    
 </body>
 </html>

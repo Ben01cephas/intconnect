@@ -16,7 +16,6 @@
 </head>
 <body>
     <?php include('../../include/navadmin.php') ?>
-    <a href="home.php">Accueil</a>
-        <?php adminConsulte();?>
+            En cours de préparation
 </body>
 </html>

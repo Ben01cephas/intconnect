@@ -26,75 +26,14 @@
     //fonction de l'administrateur----------------------------------------------------------------------------------------------------
 
     //Bouton pour aoujter des utilisateurs 
-    function modalAdd()
+    function modalAdd($target, $value)
     {
+        $url = $_SERVER['PHP_SELF'];
 
-    $url = $_SERVER['PHP_SELF'];
-
-    echo'
-        <!-- Button to Open the Modal -->
-        <button type="button" class="btn btn-primary d-inline" data-toggle="modal" data-target="#myModal">Ajouter un compte</button>
-
-        <!-- The Modal -->
-        <div class="modal fade" id="myModal">
-            <div class="modal-dialog">
-                <div class="modal-content">
-
-                        <!-- Modal Header -->
-                            <div class="modal-header">
-                                <h4 class="modal-title">Ajouter un nouveau compte</h4>
-                                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                            </div>
-
-                            <!-- Modal body -->
-                            <div class="modal-body p-5">
-                                <form action="'.$url.'" method="post" class="">
-                                    <div class="">
-                                        <label for="nom">Nom</label>
-                                        <input type="text" class="form-control" name="nom" required>
-                                    </div>
-
-                                    <div class="">
-                                        <label for="prenom">Prénom</label>
-                                        <input type="text" class="form-control" name="prenom" required>
-                                    </div>
-
-                                    <div class="">
-                                        <label for="sexe">Genre</label>
-                                        <select name="genre" class="form-control" id="">
-                                            <option value="Homme">Homme</option>
-                                            <option value="Femme">Femme</option>
-                                        </select>
-                                    </div>
-
-                                    <div class="">
-                                        <label for="tel">Numéro de téléphone</label>
-                                        <input type="number" class="form-control" name="tel" required>
-                                    </div>
-
-                                    <div class="">
-                                        <label for="email">Adresse électronique</label>
-                                        <input type="text" class="form-control" name="email" required>
-                                    </div>
-
-                                    <div>
-                                        <label for="type">Type</label>
-                                        <select name="type" class="form-control" id="">
-                                            <option value="mng">Manager</option>
-                                            <option value="int">stagiaire</option>
-                                        </select>
-                                    </div>
-
-                                    <div class="mt-3 mx-auto" style="width: 100px">
-                                        <input type="submit" name="add" class="btn btn-primary" value="Ajouter">
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>';
+         echo'<button type="button" class="btn btn-primary d-inline" data-toggle="modal" data-target="'.$target.'">'.$value.'</button>';
     }
 
+    
     //nombre d'utilisateur
     function userNumber($indice)
     {
@@ -241,15 +180,21 @@
                 while($list = mysqli_fetch_array($query_list))
                 {
                     extract($list);
+                    $trgt = "supp$id_user";
+                    $trgtm = "mod$id_user";
                     echo'
                     <tr>
-                        <td>'.$id_user.'</a></td>
-                        <td>'.$last_name.'</a></td>
-                        <td>'.$first_name.'</a></td>
-                        <td>'.$gender.'</a></td>
-                        <td>'.$tel.'</a></td>
-                        <td>'.$email.'</a></td>
-                        <td>Modifier Supprimer</td>
+                        <td>'.$id_user.'</td>
+                        <td>'.$last_name.'</td>
+                        <td>'.$first_name.'</td>
+                        <td>'.$gender.'</td>
+                        <td>'.$tel.'</td>
+                        <td>'.$email.'</td>
+                        <td>
+                            <button type="button" class="btn btn-primary d-inline" data-toggle="modal" data-target="#'.$trgtm.'">Modifier</button>
+                            <button type="button" class="btn btn-primary d-inline" data-toggle="modal" data-target="#'.$trgt.'">Supprimer</button>
+                            '.modalDrop($id_user, $trgt); modalMod($id_user, $trgtm).'
+                        </td>
                     </tr>
                     '; 
                 }       
@@ -306,6 +251,8 @@
                 while($list = mysqli_fetch_array($query_list))
                 {
                     extract($list);
+                    $trgt = "supp$id_user";
+                    $trgtm = "mod$id_user";
                     echo'
                     <tr>
                         <td>'.$id_user.'</td>
@@ -313,8 +260,12 @@
                         <td>'.$first_name.'</td>
                         <td>'.$gender.'</td>
                         <td>'.$tel.'</td>
-                        <td>'.$email.'></td>
-                        <td>Modifier Supprimer</td>
+                        <td>'.$email.'</td>
+                        <td>
+                            <button type="button" class="btn btn-primary d-inline" data-toggle="modal" data-target="#'.$trgtm.'">Modifier</button>
+                            <button type="button" class="btn btn-primary d-inline" data-toggle="modal" data-target="#'.$trgt.'">Supprimer</button>
+                            '.modalDrop($id_user, $trgt); modalMod($id_user, $trgtm).'
+                        </td>
                     </tr>
                     '; 
                 }       
@@ -323,10 +274,133 @@
         }
     }
 
+    //Fonction d'écriture des modal de suppression
+    function modalDrop($id_user_drop, $target)
+    {
+        $conn = connDb();
+        $url = $_SERVER['PHP_SELF'];
+        $i = $_GET['i'];
+        $n = $_GET['n'];
+
+        $sql = "SELECT * FROM user WHERE id_user = '$id_user_drop'";
+        $query = mysqli_query($conn, $sql) or die(mysqli_error($conn));
+        $user = mysqli_fetch_array($query);
+        extract($user);
+        $nomprenom ="$first_name $last_name";
+
+        echo'
+            <!-- The Modal -->
+            <div class="modal fade" id="'.$target.'">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+
+                    <!-- Modal Header -->
+                    <div class="modal-header">
+                        <h4 class="modal-title">Supprimer '.$nomprenom.'</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+
+                    <!-- Modal body -->
+                    <div class="modal-body p-5">
+                        <p>Voulez vous vraiment supprimer '.$nomprenom.' ?</p>
+                    </div>
+
+                    <!-- Modal footer -->
+                    <div class="modal-footer">
+                        <button class="btn btn-danger" data-dismiss="modal">Non</button>
+                        <form action="'.$url.'?i='.$i.'&n='.$n.'" method="post"><button value='.$id_user.' name="drop" type="submit" class="btn btn-primary">Oui</button></form>
+                    </div>
+                </div>
+            </div>
+        ';
+    }
+
+    //Fonction d'écriture des modal de modification
+    function modalMod($id_user_drop, $target)
+    {
+        $conn = connDb();
+        $url = $_SERVER['PHP_SELF'];
+        $i = $_GET['i'];
+        $n = $_GET['n'];
+
+        $sql = "SELECT * FROM user WHERE id_user = '$id_user_drop'";
+        $query = mysqli_query($conn, $sql) or die(mysqli_error($conn));
+        $user = mysqli_fetch_array($query);
+        extract($user);
+        $nomprenom ="$first_name $last_name";
+
+        echo'
+        <!-- The Modal -->
+        <div class="modal fade" id="'.$target.'">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+
+                    <!-- Modal Header -->
+                    <div class="modal-header">
+                        <h4 class="modal-title">Modification du compte de '.$nomprenom.'</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+
+                    <!-- Modal body -->
+                    <div class="modal-body p-5">
+                        <form action="'.$url.'?i='.$i.'&n='.$n.'" method="post" class="">
+                            <div class="row mb-3">
+                                <div class="col">
+                                    <input type="text" class="form-control" name="nom" placeholder="Nom" required>
+                                </div>
+                                <div class="col">
+                                    <input type="text" class="form-control" name="prenom" placeholder="Prénom" required>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col">
+                                    <input type="number" class="form-control" name="tel" placeholder="Numéro de téléphone" required>
+                                </div>
+                                <div class="col">
+                                    <input type="text" class="form-control" name="email" placeholder="Adresse email" required>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col">
+                                    <label for="sexe">Genre</label>
+                                    <select name="genre" class="form-control" id="">
+                                        <option value="Homme">Homme</option>
+                                        <option value="Femme">Femme</option>
+                                    </select>
+                                </div>
+
+                                <div class="col">
+                                    <label for="type">Type</label>
+                                    <select name="type" class="form-control" id="">
+                                        <option value="mng">Manager</option>
+                                        <option value="int">stagiaire</option>
+                                    </select>  
+                                </div>
+                            </div>
+                    </div>
+                            
+                            <!-- Modal footer -->
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-danger" data-dismiss="modal">Annuler</button>
+                                <input type="reset" class="btn btn-warning" value="Reset">
+                                <button value='.$id_user.' name="mod" type="submit" class="btn btn-primary">Valider</button>
+                            </div>
+                        </form>
+                </div>
+            </div>
+        </div>
+        ';
+    }
+
+
     //fonction d'ajout d'un utilisateur par l'administrateur
     function addUser()
     {
         $conn = connDb();
+        $i = $_GET['i'];
+        $n = $_GET['n'];
 
         $nom = $_POST['nom'];
         $prenom = $_POST['prenom'];
@@ -340,8 +414,29 @@
         $sql_ajout = "INSERT INTO `user` (`id_user`, `last_name`, `first_name`, `tel`, `gender`, `email`, `password`, `fonction`, `photo`) VALUES (NULL, '$nom', '$prenom', '$tel', '$sexe', '$email', '$mdpc', '$type', 'profilbasic.jpg')";
         $sql_query = mysqli_query($conn, $sql_ajout) or die(mysqli_error($conn));
 
-        header("location:user.php?n=1");
+        header("location:user.php?i=$i&n=$n");
     }
+
+        //fonction de modification des informations d'un utilisateur
+        function modUser()
+        {
+            $conn = connDb();
+            $i = $_GET['i'];
+            $n = $_GET['n'];
+            $id_int = $_POST['mod'];
+    
+            $nom = $_POST['nom'];
+            $prenom = $_POST['prenom'];
+            $sexe = $_POST['genre'];
+            $tel = $_POST['tel'];
+            $email = $_POST['email'];
+            $type = $_POST['type'];
+    
+            $sql_ajout = "UPDATE `user` SET `last_name` = '$nom', `first_name` = '$prenom', `tel` = '$tel', `email` = '$email', `fonction` = '$type', `gender` = '$sexe' WHERE `user`.`id_user` = $id_int";
+            $sql_query = mysqli_query($conn, $sql_ajout) or die(mysqli_error($conn));
+    
+            header("location:user.php?i=$i&n=$n");
+        }
 
     //fonction de recherche de recherche d'utilisateur avec filtre
     function rechercheUser()
@@ -456,13 +551,15 @@
     function deleteUser()
     {
         $conn = connDb();
+        $i = $_GET['i'];
+        $n = $_GET['n'];
 
-        $id_int = $_GET['id'];
-
+        $id_int = $_POST['drop'];
+        
         $sql_drop = " DELETE FROM `user` WHERE `id_user` = $id_int";
         $query_drop = mysqli_query($conn, $sql_drop) or die(mysqli_error($conn));
-
-        header("location:gestion.php");
+        
+        header("location:user.php?i=$i&n=$n");
     }
 
     //-----------------------------------------------------------------------------------------------------

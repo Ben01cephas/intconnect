@@ -122,8 +122,44 @@
         }
     }
 
+    //fonction de recherche de recherche d'utilisateur avec filtre
+    function rechercheUser()
+    {
+        $conn = connDb();
+
+        $nom = $_POST['nom'];
+        $tel = $_POST['tel'];
+        $sexe = $_POST['sexe'];
+        $type = $_POST['type'];
+
+        //Condition des requêtes sql, si les données existent, les requêtes seront écrites
+        if($tel=="")
+        {
+            $reqtel = "";
+        }else{
+            $reqtel = "AND tel = '$tel'";
+        }
+
+        if($sexe=="")
+        {
+            $reqsexe = "";
+        }else{
+            $reqsexe = "AND gender = '$sexe'";
+        }
+
+        if($type=="")
+        {
+            $reqtype = "AND (fonction = 'mng' OR fonction = 'int')";
+        }else{
+            $reqtype = "AND fonction = '$type'";
+        }
+
+        $sql_list = "SELECT * FROM `user` WHERE (last_name LIKE '%$nom%' OR first_name LIKE '%$nom%' OR email LIKE '%$nom%') $reqsexe $reqtel $reqtype";
+        listUser('recherche',$sql_list);
+    }
+
     //fonction qui liste de façon décroissante les utilisateur inscrit dans la base de données
-    function listUser($indice)
+    function listUser($indice, $req)
     {
 
         $conn = connDb();
@@ -200,7 +236,79 @@
                 }       
                 echo"</table></div>";     
             }
-        }else
+        }elseif($indice=='recherche')
+        {
+            $sql_nb="$req";
+            $query_nb=mysqli_query($conn,$sql_nb) or die(mysqli_error($conn));
+            $nb=mysqli_num_rows($query_nb);
+
+            if($nb%5==0)
+            {
+                $check = $nb/5;            
+            }else
+            {
+                $check = (($nb/5) + 1);
+            }
+
+            echo"<div class='container'>
+            <ul class='pagination '>";
+            for($i=1; $i<=$check; $i++)
+            {
+                echo "<li class='page-item'><a class='page-link' href='$url?i=$indice&n=$i'>$i</a></li>";
+            }
+            echo"</ul>";
+
+            if (isset($_GET['n']))
+            {
+                $n = $_GET['n'];
+                
+                $lmax = $n * 5;
+                $lmin = $lmax - 5;
+
+                $sql_list = "$req ORDER BY id_user DESC  LIMIT $lmin, $lmax";
+                $query_list = mysqli_query($conn, $sql_list) or die(mysqli_error($conn));
+
+                echo"
+                
+                <div class='table-responsive-sm'>
+                <table class='table table-hover'>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Nom</th>
+                        <th>Prénom</th>
+                        <th>Genre</th>
+                        <th>Téléphone</th>
+                        <th>Email</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                ";
+                while($list = mysqli_fetch_array($query_list))
+                {
+                    extract($list);
+                    $trgt = "supp$id_user";
+                    $trgtm = "mod$id_user";
+                    echo'
+                    <tr>
+                        <td>'.$id_user.'</td>
+                        <td>'.$last_name.'</td>
+                        <td>'.$first_name.'</td>
+                        <td>'.$gender.'</td>
+                        <td>'.$tel.'</td>
+                        <td>'.$email.'</td>
+                        <td>
+                            <button type="button" class="btn btn-primary d-inline" data-toggle="modal" data-target="#'.$trgtm.'">Modifier</button>
+                            <button type="button" class="btn btn-primary d-inline" data-toggle="modal" data-target="#'.$trgt.'">Supprimer</button>
+                            '.modalDrop($id_user, $trgt); modalMod($id_user, $trgtm).'
+                        </td>
+                    </tr>
+                    '; 
+                }       
+                echo"</table></div>";     
+            }    
+        }
+        else
         {
             $sql_nb="SELECT * FROM `user` WHERE fonction = '$indice'";
             $query_nb=mysqli_query($conn,$sql_nb) or die(mysqli_error($conn));
@@ -424,6 +532,7 @@
             $i = $_GET['i'];
             $n = $_GET['n'];
             $id_int = $_POST['mod'];
+            $url = $_SERVER['PHP_SELF'];
     
             $nom = $_POST['nom'];
             $prenom = $_POST['prenom'];
@@ -435,68 +544,8 @@
             $sql_ajout = "UPDATE `user` SET `last_name` = '$nom', `first_name` = '$prenom', `tel` = '$tel', `email` = '$email', `fonction` = '$type', `gender` = '$sexe' WHERE `user`.`id_user` = $id_int";
             $sql_query = mysqli_query($conn, $sql_ajout) or die(mysqli_error($conn));
     
-            header("location:user.php?i=$i&n=$n");
+            header("location:$url?i=$i&n=$n");
         }
-
-    //fonction de recherche de recherche d'utilisateur avec filtre
-    function rechercheUser()
-    {
-        $conn = connDb();
-
-        $nom = $_POST['nom'];
-        $tel = $_POST['tel'];
-        $sexe = $_POST['sexe'];
-        $type = $_POST['type'];
-
-        //Condition des requêtes sql, si les données existent, les requêtes seront écrites
-        if($tel=="")
-        {
-            $reqtel = "";
-        }else{
-            $reqtel = "AND tel = '$tel'";
-        }
-
-        if($sexe=="")
-        {
-            $reqsexe = "";
-        }else{
-            $reqsexe = "AND gender = '$sexe'";
-        }
-
-        if($type=="")
-        {
-            $reqtype = "AND (fonction = 'mng' OR fonction = 'int')";
-        }else{
-            $reqtype = "AND fonction = '$type'";
-        }
-
-        $sql_list = "SELECT * FROM `user` WHERE (last_name LIKE '%$nom%' OR first_name LIKE '%$nom%' OR email LIKE '%$nom%') $reqsexe $reqtel $reqtype ORDER BY last_name";
-        
-        $query_list = mysqli_query($conn, $sql_list) or die(mysqli_error($conn));
-
-        echo"
-        <table class='table table-hover'>
-        <thead>
-            <tr>
-                <th>Nom</th>
-                <th>Prénom</th>
-                <th>Adresse email</th>
-            </tr>
-        </thead>
-        ";
-        while($list = mysqli_fetch_array($query_list))
-            {
-                extract($list);
-                echo"
-                <tr>
-                    <td><a href='compte.php?id=$id_user'>$last_name</a></td>
-                    <td><a href='compte.php?id=$id_user'>$first_name</a></td>
-                    <td><a href='compte.php?id=$id_user'>$email</a></td>
-                </tr>
-                "; 
-            }       
-        echo"</table></div>";     
-    }
 
     function compteConsulte()
     {
@@ -551,6 +600,7 @@
     function deleteUser()
     {
         $conn = connDb();
+        $url = $_SERVER['PHP_SELF'];
         $i = $_GET['i'];
         $n = $_GET['n'];
 
@@ -559,7 +609,7 @@
         $sql_drop = " DELETE FROM `user` WHERE `id_user` = $id_int";
         $query_drop = mysqli_query($conn, $sql_drop) or die(mysqli_error($conn));
         
-        header("location:user.php?i=$i&n=$n");
+        header("location:$url?i=$i&n=$n");
     }
 
     //-----------------------------------------------------------------------------------------------------

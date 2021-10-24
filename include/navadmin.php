@@ -4,7 +4,7 @@
         </div>
         
         <ul class="nav justify-content-end">
-            <li class="nav-item p-2"><a href="" class="text-white">Profil</a></li>
+            <li class="nav-item p-2"><a href="profiladmin.php" class="text-white">Profil</a></li>
             <li class="nav-item p-2"><a href="" class="text-white">Notification</a></li>
             <li class="nav-item"><form action="<?php echo $_SERVER['PHP_SELF']?>" method="post"><input type="submit" name="logout" value="DECONNEXION" class="btn text-light"></form></li>
         </ul>

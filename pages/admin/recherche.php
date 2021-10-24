@@ -32,8 +32,8 @@
                 <label for="sexe">Genre: </label>
                 <select name="sexe" id="" class="form-control">
                     <option value="">Tous</option>
-                    <option value="M">M</option>
-                    <option value="F">F</option>
+                    <option value="Homme">M</option>
+                    <option value="Femme">F</option>
                 </select>
                 
                 <label for="type">Type: </label>

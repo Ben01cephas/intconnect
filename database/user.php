@@ -85,9 +85,9 @@
                 extract($user);
                 echo"
                 <tr>
-                    <td><a class='text-muted' href='compte.php?id=$id_user'>$last_name</a></td>
-                    <td><a class='text-muted' href='compte.php?id=$id_user'>$first_name</a></td>
-                    <td><a class='text-muted' href='compte.php?id=$id_user'>$email</a></td>
+                    <td>$last_name</td>
+                    <td>$first_name</td>
+                    <td>$email</td>
                 </tr>
                 "; 
             }       
@@ -112,9 +112,9 @@
                 extract($user);
                 echo"
                 <tr>
-                    <td><a class='text-muted' href='compte.php?id=$id_user'>$last_name</a></td>
-                    <td><a class='text-muted' href='compte.php?id=$id_user'>$first_name</a></td>
-                    <td><a class='text-muted' href='compte.php?id=$id_user'>$email</a></td>
+                    <td>$last_name</td>
+                    <td>$first_name</td>
+                    <td>$email</td>
                 </tr>
                 "; 
             }       
@@ -229,7 +229,7 @@
                         <td>
                             <button type="button" class="btn btn-primary d-inline" data-toggle="modal" data-target="#'.$trgtm.'">Modifier</button>
                             <button type="button" class="btn btn-primary d-inline" data-toggle="modal" data-target="#'.$trgt.'">Supprimer</button>
-                            '.modalDrop($id_user, $trgt); modalMod($id_user, $trgtm).'
+                            '.modalDrop($id_user, $trgt); modalMod($id_user, $trgtm, 'user').'
                         </td>
                     </tr>
                     '; 
@@ -300,7 +300,7 @@
                         <td>
                             <button type="button" class="btn btn-primary d-inline" data-toggle="modal" data-target="#'.$trgtm.'">Modifier</button>
                             <button type="button" class="btn btn-primary d-inline" data-toggle="modal" data-target="#'.$trgt.'">Supprimer</button>
-                            '.modalDrop($id_user, $trgt); modalMod($id_user, $trgtm).'
+                            '.modalDrop($id_user, $trgt); modalMod($id_user, $trgtm, 'user').'
                         </td>
                     </tr>
                     '; 
@@ -372,7 +372,7 @@
                         <td>
                             <button type="button" class="btn btn-primary d-inline" data-toggle="modal" data-target="#'.$trgtm.'">Modifier</button>
                             <button type="button" class="btn btn-primary d-inline" data-toggle="modal" data-target="#'.$trgt.'">Supprimer</button>
-                            '.modalDrop($id_user, $trgt); modalMod($id_user, $trgtm).'
+                            '.modalDrop($id_user, $trgt); modalMod($id_user, $trgtm, 'user').'
                         </td>
                     </tr>
                     '; 
@@ -424,10 +424,12 @@
     }
 
     //Fonction d'écriture des modal de modification
-    function modalMod($id_user_drop, $target)
+    function modalMod($id_user_drop, $target, $usertype)
     {
         $conn = connDb();
         $url = $_SERVER['PHP_SELF'];
+        
+        
         $i = $_GET['i'];
         $n = $_GET['n'];
 
@@ -450,8 +452,16 @@
                     </div>
 
                     <!-- Modal body -->
-                    <div class="modal-body p-5">
-                        <form action="'.$url.'?i='.$i.'&n='.$n.'" method="post" class="">
+                    <div class="modal-body p-5">';
+
+                    if($usertype=='user')
+                    {
+                        echo'<form action="'.$url.'?i='.$i.'&n='.$n.'" method="post" class="">';
+                    }else{
+                        echo'<form action="'.$url.'" method="post" class="">';  
+                    }
+    
+                        echo'
                             <div class="row mb-3">
                                 <div class="col">
                                     <input type="text" class="form-control" name="nom" placeholder="Nom" required>
@@ -477,15 +487,29 @@
                                         <option value="Homme">Homme</option>
                                         <option value="Femme">Femme</option>
                                     </select>
-                                </div>
+                                </div>';
 
-                                <div class="col">
-                                    <label for="type">Type</label>
-                                    <select name="type" class="form-control" id="">
-                                        <option value="mng">Manager</option>
-                                        <option value="int">stagiaire</option>
-                                    </select>  
-                                </div>
+                                if($usertype=='user')
+                                {
+                                    echo'
+                                        <div class="col">
+                                        <label for="type">Type</label>
+                                        <select name="type" class="form-control" id="">
+                                            <option value="mng">Manager</option>
+                                            <option value="int">stagiaire</option>
+                                        </select>  
+                                    </div>';
+                                }else{
+                                    echo'
+                                        <div class="col">
+                                        <label for="type">Type</label>
+                                        <select name="type" class="form-control" id="">
+                                            <option value="adm">Administrateur</option>
+                                        </select>  
+                                    </div>';
+                                }
+
+                                echo'
                             </div>
                     </div>
                             
@@ -863,6 +887,34 @@
             }       
             echo"</table></div>";     
         }
+    }
+
+    //fonction permettant de renvoyer le nom de la photo de profil d'un utilisateur
+    function profilImage()
+    {
+        $id_user = $_SESSION['id_user'];
+        $conn = connDb();
+
+        $sql_profil="SELECT photo FROM user WHERE id_user = $id_user";
+        $query_profil = mysqli_query($conn, $sql_profil) or die(mysqli_error($conn));
+        $profil = mysqli_fetch_array($query_profil);
+        extract($profil);
+
+        echo"$photo";
+    }
+
+    //Fonction permettant de renvoyer une infromation précise d'un user
+    function userInfo($indice)
+    {
+        $conn = connDb();
+        $id_user = $_SESSION['id_user'];
+
+        $sql ="SELECT $indice as info FROM user WHERE id_user = $id_user";
+        $query = mysqli_query($conn, $sql) or die(mysqli_error($conn));
+        $info = mysqli_fetch_array($query);
+        extract($info);
+
+        echo"$info";
     }
 ?>
 

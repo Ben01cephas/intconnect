@@ -429,9 +429,11 @@
         $conn = connDb();
         $url = $_SERVER['PHP_SELF'];
         
-        
-        $i = $_GET['i'];
-        $n = $_GET['n'];
+        if(isset($_GET['i']))
+        {
+            $i = $_GET['i'];
+            $n = $_GET['n'];
+        }
 
         $sql = "SELECT * FROM user WHERE id_user = '$id_user_drop'";
         $query = mysqli_query($conn, $sql) or die(mysqli_error($conn));
@@ -454,64 +456,64 @@
                     <!-- Modal body -->
                     <div class="modal-body p-5">';
 
-                    if($usertype=='user')
-                    {
-                        echo'<form action="'.$url.'?i='.$i.'&n='.$n.'" method="post" class="">';
-                    }else{
-                        echo'<form action="'.$url.'" method="post" class="">';  
-                    }
-    
-                        echo'
-                            <div class="row mb-3">
-                                <div class="col">
-                                    <input type="text" class="form-control" name="nom" placeholder="Nom" required>
+                        if($usertype=='user')
+                        {
+                            echo'<form action="'.$url.'?i='.$i.'&n='.$n.'" method="post" class="">';
+                        }else{
+                            echo'<form action="'.$url.'" method="post" class="">';  
+                        }
+        
+                            echo'
+                                <div class="row mb-3">
+                                    <div class="col">
+                                        <input type="text" class="form-control" name="nom" placeholder="Nom" required>
+                                    </div>
+                                    <div class="col">
+                                        <input type="text" class="form-control" name="prenom" placeholder="Prénom" required>
+                                    </div>
                                 </div>
-                                <div class="col">
-                                    <input type="text" class="form-control" name="prenom" placeholder="Prénom" required>
-                                </div>
-                            </div>
 
-                            <div class="row">
-                                <div class="col">
-                                    <input type="number" class="form-control" name="tel" placeholder="Numéro de téléphone" required>
+                                <div class="row">
+                                    <div class="col">
+                                        <input type="number" class="form-control" name="tel" placeholder="Numéro de téléphone" required>
+                                    </div>
+                                    <div class="col">
+                                        <input type="text" class="form-control" name="email" placeholder="Adresse email" required>
+                                    </div>
                                 </div>
-                                <div class="col">
-                                    <input type="text" class="form-control" name="email" placeholder="Adresse email" required>
-                                </div>
-                            </div>
 
-                            <div class="row">
-                                <div class="col">
-                                    <label for="sexe">Genre</label>
-                                    <select name="genre" class="form-control" id="">
-                                        <option value="Homme">Homme</option>
-                                        <option value="Femme">Femme</option>
-                                    </select>
-                                </div>';
+                                <div class="row">
+                                    <div class="col">
+                                        <label for="sexe">Genre</label>
+                                        <select name="genre" class="form-control" id="">
+                                            <option value="Homme">Homme</option>
+                                            <option value="Femme">Femme</option>
+                                        </select>
+                                    </div>';
 
                                 if($usertype=='user')
-                                {
-                                    echo'
-                                        <div class="col">
-                                        <label for="type">Type</label>
-                                        <select name="type" class="form-control" id="">
-                                            <option value="mng">Manager</option>
-                                            <option value="int">stagiaire</option>
-                                        </select>  
-                                    </div>';
+                                    {
+                                        echo'
+                                            <div class="col">
+                                            <label for="type">Type</label>
+                                            <select name="type" class="form-control" id="">
+                                                <option value="mng">Manager</option>
+                                                <option value="int">stagiaire</option>
+                                            </select>  
+                                        </div>';
                                 }else{
-                                    echo'
-                                        <div class="col">
-                                        <label for="type">Type</label>
-                                        <select name="type" class="form-control" id="">
-                                            <option value="adm">Administrateur</option>
-                                        </select>  
-                                    </div>';
+                                        echo'
+                                            <div class="col">
+                                            <label for="type">Type</label>
+                                            <select name="type" class="form-control" id="">
+                                                <option value="adm">Administrateur</option>
+                                            </select>  
+                                        </div>';
                                 }
 
                                 echo'
+                                </div>
                             </div>
-                    </div>
                             
                             <!-- Modal footer -->
                             <div class="modal-footer">
@@ -915,6 +917,29 @@
         extract($info);
 
         echo"$info";
+    }
+
+    //fonction pour modifier l'imagde de profil
+    function userModProfil()
+    {
+        $tmpName = $_FILES['file']['tmp_name'];
+        $name1 = $_FILES['file']['name'];
+        $size = $_FILES['file']['size'];
+        $error = $_FILES['file']['error'];
+        $id_user = $_SESSION['id_user'];
+        $name = "$id_user&$name1";
+        $url = $_SERVER['PHP_SELF'];
+
+        move_uploaded_file($tmpName, '../../assets/images/'.$name);
+
+        $conn = connDb();
+
+        if($name1 ==""){
+            echo"Erreur";
+        }else{
+            $sql_chprofil="UPDATE `user` SET `photo` = '$name' WHERE `user`.`id_user` = $id_user";
+            $query_chprofil = mysqli_query($conn, $sql_chprofil) or die(mysqli_error($conn));
+        }
     }
 ?>
 

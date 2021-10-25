@@ -1,4 +1,4 @@
-<?php session_start(); require_once("../../database/user.php"); if(isset($_POST['mod'])){modUser();};?>
+<?php session_start(); require_once("../../database/user.php"); if(isset($_POST['mod'])){modUser();}; if(isset($_POST['phprofil'])){userModProfil();}?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -25,7 +25,8 @@
                     <img src="../../assets/images/<?php profilImage();?>" alt="imageprofil" class="rounded-circle" style="width: 150px; height: 150px;">
                 </div>
                 <div class="text-center mt-5">
-                    <button class="btn bg-primary">Changer</button>
+                        <!--  -->
+                        <button class="btn bg-primary" data-toggle="modal" data-target="#modProfil">Changer</button>
                 </div>
 
             </div>
@@ -52,5 +53,35 @@
         $id_admin = $_SESSION['id_user'];
         modalMod($id_admin,'modadmin', 'admin');
     ?>
+
+    <!-- The Modal -->
+    <div class="modal fade" id="modProfil">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title">Modification de photo de profil</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body p-5">
+                    <p>Veuillez télécharger votre photo</p>
+                    <form action="<?php $_SERVER['PHP_SELF'] ?>" method="post" enctype="multipart/form-data">
+                        <div class="custom-file">
+                            <input class="custom-file-input" type="file" name="file" id="prfl">
+                            <label class="custom-file-label" for="prfl">Choisir le fichier</label>
+                        </div>
+                </div>
+
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button name="phprofil" type="submit" class="btn btn-primary">Modifier</button>
+                    <button class="btn btn-danger" data-dismiss="modal">Annuler</button>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

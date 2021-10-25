@@ -45,7 +45,7 @@
 
                 <button type="submit" class="btn btn-primary" name="search">Rechercher</button>
             </form>
-            <?php if(isset($_POST['search'])){rechercheUser();};?>
+            <?php modalAddUser(); if(isset($_POST['search'])){rechercheUser();};?>
         </div>
     </div>
 </body>

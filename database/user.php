@@ -533,8 +533,12 @@
     function addUser()
     {
         $conn = connDb();
-        $i = $_GET['i'];
-        $n = $_GET['n'];
+
+        if(isset($_GET['i']))
+        {
+            $i = $_GET['i'];
+            $n = $_GET['n'];
+        }
 
         $nom = $_POST['nom'];
         $prenom = $_POST['prenom'];
@@ -548,7 +552,12 @@
         $sql_ajout = "INSERT INTO `user` (`id_user`, `last_name`, `first_name`, `tel`, `gender`, `email`, `password`, `fonction`, `photo`) VALUES (NULL, '$nom', '$prenom', '$tel', '$sexe', '$email', '$mdpc', '$type', 'profilbasic.jpg')";
         $sql_query = mysqli_query($conn, $sql_ajout) or die(mysqli_error($conn));
 
-        header("location:user.php?i=$i&n=$n");
+        if(isset($_GET['i']))
+        {
+            header("location:user.php?i=$i&n=$n");
+        }else{
+            header("location:user.php?i=user&n=1");
+        }
     }
 
         //fonction de modification des informations d'un utilisateur
@@ -940,6 +949,89 @@
             $sql_chprofil="UPDATE `user` SET `photo` = '$name' WHERE `user`.`id_user` = $id_user";
             $query_chprofil = mysqli_query($conn, $sql_chprofil) or die(mysqli_error($conn));
         }
+    }
+
+    function modalAddUser()
+    {
+        $url = $_SERVER['PHP_SELF'];
+
+        if(isset($_GET['i']))
+        {
+            $i = $_GET['i'];
+            $n = $_GET['n'];
+        }
+
+        echo'
+        <!-- The Modal -->
+        <div class="modal fade" id="ajout">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+
+                    <!-- Modal Header -->
+                    <div class="modal-header">
+                        <h4 class="modal-title">Ajout nouveau utilisateur</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+
+                    <!-- Modal body -->
+                    <div class="modal-body p-5">';
+
+                    if(isset($_GET['i']))
+                    {
+                        echo'<form action="'.$url.'?i='.$i.'&n='.$n.'" method="post">';
+                    }else{
+                        echo'<form action="'.$url.'" method="post">';
+                    }
+                            echo'
+                            <div class="row mb-3">
+                                <div class="col">
+                                    <input type="text" class="form-control" name="nom" placeholder="Nom" required>
+                                </div>
+                                <div class="col">
+                                    <input type="text" class="form-control" name="prenom" placeholder="Prénom" required>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col">
+                                    <input type="number" class="form-control" name="tel" placeholder="Numéro de téléphone" required>
+                                </div>
+                                <div class="col">
+                                    <input type="text" class="form-control" name="email" placeholder="Adresse email" required>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col">
+                                    <label for="sexe">Genre</label>
+                                    <select name="genre" class="form-control" id="">
+                                        <option value="Homme">Homme</option>
+                                        <option value="Femme">Femme</option>
+                                    </select>
+                                </div>
+
+                                <div class="col">
+                                    <label for="type">Type</label>
+                                    <select name="type" class="form-control" id="">
+                                        <option value="mng">Manager</option>
+                                        <option value="int">stagiaire</option>
+                                    </select>  
+                                </div>
+                            </div>
+                    </div>
+                            
+                            <!-- Modal footer -->
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-danger" data-dismiss="modal">Annuler</button>
+                                <input type="reset" class="btn btn-warning" value="Reset">
+                                <input type="submit" name="add" class="btn btn-primary" value="Ajouter">
+                            </div>
+                        </form>
+                    
+                </div>
+            </div>
+        </div>
+        ';
     }
 ?>
 

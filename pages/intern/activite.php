@@ -1,4 +1,4 @@
-<?php session_start(); require_once("../../database/user.php"); require_once("../../database/activity.php"); $npage = "activite"?>
+<?php session_start(); require_once("../../database/user.php"); require_once("../../database/activity.php");?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,20 +13,23 @@
     <title>Document</title>
 </head>
 <body>
-    <?php include('../../include/navint.php') ?>
+<?php include('../../include/navint.php') ?>
     <?php if(isset($_POST['acti'])){modAct();}?>
-
-    <?php
-        $date = datejour();
-        $id = $_SESSION['id_user'];
-        adminAct($date, $id);
-    ?>
+    <div class="container w-75 mt-5 px-5">
+        <?php
+            $trueDate = date('N-d-n-Y');    
+            $date = dateFrançaise($trueDate);
+            $id = $_SESSION['id_user'];
+            adminAct($date, $id);
+        ?>
+        <div class="text-center">
+            <button type="button" class="btn btn-primary w-25" data-toggle="modal" data-target="#myModal">Modifier</button>
+        </div>    
+    </div>
 
     <div class="container w-75 text-center">
     <!-- Button to Open the Modal -->
-    <button type="button" class="btn btn-primary w-25" data-toggle="modal" data-target="#myModal">
-        Modifier
-    </button>
+    
      <!-- The Modal -->
      <div class="modal fade" id="myModal">
             <div class="modal-dialog">
@@ -40,6 +43,8 @@
 
                     <!-- Modal body -->
                     <div class="modal-body p-5">
+                        <p>Aoutez une ou plusieurs activités.</p>
+                        <p>(séparer les activités par des ";")</p>
                         <form action="<?php echo $_SERVER['PHP_SELF']?>" method="post" class="">
                             <div class="">
                                 <select name="cren" id="">

@@ -4,13 +4,7 @@
      * contient toute les fonction concernant les utilisateur de l'application(manager, administrateur et stagiaire)
      * écrit par Mahoungou Céphas Ben Adi
     */
-
-    //Retourne la date du jour
-    function datejour(){date_default_timezone_set('Africa/Dakar'); $date = date('Y-m-d');return $date; }
-
-    //écris la date du jour
-    function datedujour(){date_default_timezone_set('Africa/Dakar'); $date = datejour();echo"$date";}
-
+    
     //Fonction permettant de se connecter à la base de donnée en tant qu'utilisateur 'root'
     function connDb() {$conn = mysqli_connect("localhost", "root", "", "intconnect");return $conn;}
 
@@ -21,6 +15,64 @@
         {
             echo"selected";
         }
+    }
+
+    //Fonction qui retourne l'heure du format 12 heure en un format 24h
+    function heure($heure)//$heure doit être au format 'h:i:s a'
+    {
+        //séparateur qui va scinder la variable en deux partie: la partie 'h:i:s' et la partie 'a' 
+        $sep = explode(" ", $heure);
+        
+        if($sep[1]=="am")//Si c'est avant midi
+        {
+            return $sep[0];
+        }elseif($sep[1]=="pm")//si c'est après après midi
+        {
+            //séparateur qui va séparer l'heure en heure, minute et en seconde
+            $sepHeure = explode(":", $sep[0]);
+
+            $hr = intval(12) + intval($sepHeure[0]);//Heure
+            $min = $sepHeure[1];//Minute
+            $sec = $sepHeure[2];//Seconde
+
+            $trueHour = "$hr:$min:$sec";//L'heure en format 24h
+
+            return $trueHour;
+        }
+    }
+
+    //Fonction qui récupère une date et qui l'affiche en français
+    function dateFrançaise($dateEch)
+    {
+        $sep = explode("-", $dateEch);
+
+        switch($sep[0]){
+            case "1": $jour = "Lun"; break;
+            case "2": $jour = "Mar"; break;
+            case "3": $jour = "Mer"; break;
+            case "4": $jour = "Jeu"; break;
+            case "5": $jour = "Ven"; break;
+            case "6": $jour = "Sam"; break;
+            case "7": $jour = "Dim"; break;
+        }
+
+        switch($sep[2]){
+            case "1": $mois = "Janv"; break;
+            case "2": $mois = "Fev"; break;
+            case "3": $mois = "Mar"; break;
+            case "4": $mois = "Avr"; break;
+            case "5": $mois = "Mai"; break;
+            case "6": $mois = "Jui"; break;
+            case "7": $mois = "Jui"; break;
+            case "8": $mois = "Aou"; break;
+            case "9": $mois = "Sept"; break;
+            case "10": $mois = "Oct"; break;
+            case "11": $mois = "Nov"; break;
+            case "12": $mois = "Dec"; break;
+        }
+
+        $dateFr = "$jour $sep[1] $mois $sep[3]";
+        return $dateFr;
     }
 
     //fonction de l'administrateur----------------------------------------------------------------------------------------------------
@@ -690,9 +742,11 @@
                     $_SESSION['loginint'] = $login;
                     $iduser = $_SESSION['id_user'];
 
-                    date_default_timezone_set('Africa/Dakar');    
-                    $Date = datejour();
-                    $Time = date('h:i:s a');
+                    date_default_timezone_set('Africa/Dakar');
+                    $trueDate = date('N-d-n-Y');    
+                    $Date = dateFrançaise($trueDate);
+                    $heure = date('h:i:s a');
+                    $Time = heure($heure);
                     $mois = date('m');
                     $annee = date('Y');
                     
@@ -749,7 +803,8 @@
             $conn = connDb();
             $id_connexion = $_SESSION['id_connect'];
             date_default_timezone_set('Africa/Dakar');   
-            $Time = date('h:i:s a');
+            $heure = date('h:i:s a');
+            $Time = heure($heure);
     
             $sql_deco = "UPDATE `connect_intern` SET `hr_disconnect` = '$Time' WHERE `connect_intern`.`id_connect_intern` = $id_connexion; ";
             $query_deco=mysqli_query($conn,$sql_deco) or die(mysqli_error($conn));
@@ -775,7 +830,7 @@
         $conn = connDb();
         $id_user = $_SESSION['id_user'];
 
-        echo"<div class='container w-50'><table class='table table-hover'><tr><th>Date</th><th>Heure de connexion</th></tr>";
+        echo"<table class='table table-hover table-responsive-sm'><tr><th>Date</th><th>Heure de connexion</th></tr>";
         $sql_pre = "SELECT * FROM `connect_intern` JOIN user WHERE connect_intern.id_user = user.id_user AND user.id_user = '$id_user' LIMIT 30; ";
         $sql_query_apre = mysqli_query($conn, $sql_pre) or die(mysqli_error($conn));
         while($pre = mysqli_fetch_array($sql_query_apre))
@@ -783,7 +838,7 @@
             extract($pre);
             echo"<tr><td>$date_connect</td> <td>connecté à $hr_connect</td></tr>";
         }        
-        echo"</table></div>";
+        echo"</table>";
     }
 
     function listeIntpres()

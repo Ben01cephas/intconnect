@@ -16,7 +16,9 @@
 <body>
 
     <?php include('../../include/navint.php') ?>
-    <?php userPres();?>
+    <div class="container w-50">
+        <?php userPres();?>
+    </div>
 
 </body>
 </html>
